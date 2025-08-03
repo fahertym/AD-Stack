@@ -1,0 +1,36 @@
+# Images Directory
+
+This directory contains diagrams, screenshots, and other visual assets for AD-Stack documentation.
+
+## Directory Structure
+
+```
+images/
+├── architecture/          # Architecture diagrams
+├── screenshots/           # UI screenshots  
+├── deployment/           # Deployment diagrams
+├── network/              # Network topology diagrams
+└── logos/                # Project logos and branding
+```
+
+## Guidelines
+
+### File Naming
+- Use descriptive names: `user-management-screenshot.png`
+- Include version in name if needed: `dashboard-v1.0.png`
+- Use lowercase with hyphens: `network-topology-diagram.svg`
+
+### File Formats
+- **Screenshots**: PNG for better quality
+- **Diagrams**: SVG for scalability, PNG as fallback
+- **Photos**: JPEG for smaller file sizes
+- **Icons**: SVG preferred
+
+### Image Optimization
+- Compress images before committing
+- Use appropriate resolution (no need for 4K screenshots)
+- Include alt text in documentation
+
+## Current Images
+
+(No images yet - they will be added as the project develops)

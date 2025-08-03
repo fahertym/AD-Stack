@@ -1,0 +1,180 @@
+/* Custom CSS for AD-Stack UI */
+
+:root {
+  --ad-stack-primary: #06c;
+  --ad-stack-secondary: #72767b;
+  --ad-stack-success: #3e8635;
+  --ad-stack-warning: #f0ab00;
+  --ad-stack-danger: #c9190b;
+  --ad-stack-info: #2b9af3;
+}
+
+/* Global styles */
+body {
+  margin: 0;
+  font-family: "Red Hat Text", "Overpass", overpass, helvetica, arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Main content area */
+#main-content {
+  outline: none;
+}
+
+/* Custom PatternFly overrides */
+.pf-v5-c-page__main {
+  min-height: calc(100vh - 72px);
+}
+
+/* Login page customizations */
+.pf-v5-c-login {
+  --pf-v5-c-login--BackgroundColor: #151515;
+}
+
+.pf-v5-c-login__main {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+/* Card enhancements */
+.pf-v5-c-card {
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.pf-v5-c-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Status indicators */
+.status-running {
+  color: var(--ad-stack-success);
+}
+
+.status-stopped {
+  color: var(--ad-stack-warning);
+}
+
+.status-error {
+  color: var(--ad-stack-danger);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .pf-v5-c-page__sidebar {
+    --pf-v5-c-page__sidebar--Width: 100%;
+  }
+}
+
+/* Loading states */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Form enhancements */
+.pf-v5-c-form__group {
+  margin-bottom: 1rem;
+}
+
+.pf-v5-c-form__helper-text {
+  font-size: 0.875rem;
+}
+
+/* Table enhancements */
+.pf-v5-c-table {
+  --pf-v5-c-table--BorderWidth: 1px;
+}
+
+.pf-v5-c-table th {
+  font-weight: 600;
+}
+
+/* Sidebar customizations */
+.pf-v5-c-page__sidebar-body {
+  padding-top: 1rem;
+}
+
+.pf-v5-c-nav__item {
+  margin-bottom: 0.25rem;
+}
+
+/* Toast notifications */
+.Toastify__toast {
+  border-radius: 4px;
+  font-family: inherit;
+}
+
+.Toastify__toast--success {
+  background-color: var(--ad-stack-success);
+}
+
+.Toastify__toast--error {
+  background-color: var(--ad-stack-danger);
+}
+
+.Toastify__toast--warning {
+  background-color: var(--ad-stack-warning);
+}
+
+.Toastify__toast--info {
+  background-color: var(--ad-stack-info);
+}
+
+/* Utility classes */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 1rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+.mb-5 { margin-bottom: 3rem; }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.mt-4 { margin-top: 1.5rem; }
+.mt-5 { margin-top: 3rem; }
+
+.p-0 { padding: 0; }
+.p-1 { padding: 0.25rem; }
+.p-2 { padding: 0.5rem; }
+.p-3 { padding: 1rem; }
+.p-4 { padding: 1.5rem; }
+.p-5 { padding: 3rem; }
+
+/* Print styles */
+@media print {
+  .pf-v5-c-page__sidebar,
+  .pf-v5-c-masthead {
+    display: none !important;
+  }
+  
+  .pf-v5-c-page__main {
+    margin-left: 0 !important;
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "AD-Stack Management Console",
+  "short_name": "AD-Stack",
+  "description": "Web-based management console for AD-Stack Active Directory replacement",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#06c",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
