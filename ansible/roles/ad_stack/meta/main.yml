@@ -1,0 +1,36 @@
+galaxy_info:
+  author: AD-Stack Contributors
+  description: Ansible role for deploying AD-Stack Active Directory replacement
+  company: AD-Stack Project
+  license: AGPL-3.0
+  min_ansible_version: 2.9
+  
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+        - noble
+    - name: EL
+      versions:
+        - 8
+        - 9
+    - name: Fedora
+      versions:
+        - 38
+        - 39
+
+  galaxy_tags:
+    - active-directory
+    - identity
+    - authentication
+    - ldap
+    - kerberos
+    - smb
+    - directory-services
+
+dependencies:
+  - role: common
+    when: common_role_enabled | default(true)
+  - role: docker
+    when: docker_role_enabled | default(true)

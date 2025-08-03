@@ -1,0 +1,146 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:14-alpine
+    container_name: ad-stack-postgres
+    environment:
+      POSTGRES_DB: ad_stack
+      POSTGRES_USER: ad-stack
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-development_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ad-stack"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: ad-stack-redis
+    command: redis-server --requirepass ${REDIS_PASSWORD:-development_password}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # AD-Stack Orchestrator
+  orchestrator:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile
+      target: orchestrator
+    container_name: ad-stack-orchestrator
+    environment:
+      - RUST_LOG=${RUST_LOG:-info}
+      - DATABASE_URL=postgresql://ad-stack:${POSTGRES_PASSWORD:-development_password}@postgres:5432/ad_stack
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-development_password}@redis:6379
+      - AD_DOMAIN=${AD_DOMAIN:-example.local}
+      - AD_REALM=${AD_REALM:-EXAMPLE.LOCAL}
+      - AD_SERVER_IP=${AD_SERVER_IP:-192.168.1.100}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - orchestrator_config:/etc/ad-stack
+      - orchestrator_logs:/var/log/ad-stack
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Samba 4 AD DC
+  samba:
+    image: samuelrohrbach/samba4:latest
+    container_name: ad-stack-samba
+    environment:
+      - DOMAIN=${AD_DOMAIN:-example.local}
+      - REALM=${AD_REALM:-EXAMPLE.LOCAL}
+      - ADMINPASS=${AD_ADMIN_PASSWORD:-Password123!}
+      - DNSFORWARDER=${AD_DNS_FORWARDERS:-8.8.8.8}
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "88:88/tcp"
+      - "88:88/udp"
+      - "135:135/tcp"
+      - "389:389/tcp"
+      - "445:445/tcp"
+      - "464:464/tcp"
+      - "464:464/udp"
+      - "636:636/tcp"
+      - "3268:3268/tcp"
+      - "3269:3269/tcp"
+    volumes:
+      - samba_config:/etc/samba
+      - samba_data:/var/lib/samba
+      - samba_logs:/var/log/samba
+    privileged: true
+    restart: unless-stopped
+
+  # Frontend Development Server
+  frontend:
+    build:
+      context: ../../ui
+      dockerfile: ../docker/Dockerfile.frontend.dev
+    container_name: ad-stack-frontend
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8080/api/v1
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../../ui:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: ad-stack-nginx
+    ports:
+      - "443:443"
+      - "80:80"
+      - "9090:9090"  # Cockpit-style admin interface
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - orchestrator
+      - frontend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  samba_config:
+  samba_data:
+  samba_logs:
+  orchestrator_config:
+  orchestrator_logs:
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16

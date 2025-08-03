@@ -1,0 +1,42 @@
+# Default variables for AD-Stack deployment
+
+# Version to deploy
+ad_stack_version: "latest"
+
+# System configuration
+ad_stack_user: "ad-stack"
+ad_stack_group: "ad-stack"
+ad_stack_home: "/opt/ad-stack"
+ad_stack_config_dir: "/etc/ad-stack"
+ad_stack_data_dir: "/var/lib/ad-stack"
+ad_stack_log_dir: "/var/log/ad-stack"
+
+# Deployment settings
+deployment_mode: "production"  # production, development, testing
+high_availability: false
+backup_enabled: true
+monitoring_enabled: true
+
+# Security settings
+tls_enabled: true
+log_level: "info"  # debug, info, warn, error
+
+# Database settings
+db_max_connections: 20
+db_timeout_seconds: 30
+
+# Certificate settings
+cert_validity_days: 365
+
+# Backup settings
+backup_schedule: "0 2 * * *"  # Daily at 2 AM
+backup_retention_days: 30
+
+# Monitoring settings
+prometheus_retention: "15d"
+grafana_admin_password: "admin"  # Change this!
+
+# Performance tuning
+samba_max_connections: 1000
+dns_cache_size: "100m"
+redis_max_memory: "256mb"
