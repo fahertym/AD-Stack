@@ -1,0 +1,12 @@
+/home/runner/work/AD-Stack/AD-Stack/target/debug/deps/ad_stack-b4fcd36e3758094c.d: src/lib.rs src/api/mod.rs src/config/mod.rs src/orchestration/mod.rs
+
+/home/runner/work/AD-Stack/AD-Stack/target/debug/deps/libad_stack-b4fcd36e3758094c.rlib: src/lib.rs src/api/mod.rs src/config/mod.rs src/orchestration/mod.rs
+
+/home/runner/work/AD-Stack/AD-Stack/target/debug/deps/libad_stack-b4fcd36e3758094c.rmeta: src/lib.rs src/api/mod.rs src/config/mod.rs src/orchestration/mod.rs
+
+src/lib.rs:
+src/api/mod.rs:
+src/config/mod.rs:
+src/orchestration/mod.rs:
+
+# env-dep:CARGO_PKG_VERSION=0.1.0
