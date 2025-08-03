@@ -1,0 +1,32 @@
+[Unit]
+Description=AD-Stack Active Directory Replacement
+Documentation=https://docs.ad-stack.org
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+User={{ ad_stack_user }}
+Group={{ ad_stack_group }}
+WorkingDirectory={{ ad_stack_home }}
+Environment=COMPOSE_PROJECT_NAME=ad-stack
+ExecStart=/usr/bin/docker compose -f {{ ad_stack_home }}/docker-compose.yml up -d
+ExecStop=/usr/bin/docker compose -f {{ ad_stack_home }}/docker-compose.yml down
+ExecReload=/usr/bin/docker compose -f {{ ad_stack_home }}/docker-compose.yml restart
+TimeoutStartSec=300
+TimeoutStopSec=120
+
+# Security settings
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths={{ ad_stack_home }} {{ ad_stack_data_dir }} {{ ad_stack_log_dir }}
+
+# Restart policy
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

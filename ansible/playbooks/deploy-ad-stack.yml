@@ -1,0 +1,74 @@
+---
+- name: Deploy AD-Stack
+  hosts: ad_stack_servers
+  become: yes
+  gather_facts: yes
+  
+  vars:
+    ad_stack_version: "{{ ad_stack_version | default('latest') }}"
+    ad_stack_user: "ad-stack"
+    ad_stack_group: "ad-stack"
+    ad_stack_home: "/opt/ad-stack"
+    ad_stack_config_dir: "/etc/ad-stack"
+    ad_stack_data_dir: "/var/lib/ad-stack"
+    ad_stack_log_dir: "/var/log/ad-stack"
+    
+  pre_tasks:
+    - name: Validate required variables
+      assert:
+        that:
+          - ad_domain is defined
+          - ad_realm is defined
+          - ad_admin_password is defined
+          - ad_server_ip is defined
+        fail_msg: "Required variables not defined. Check group_vars/all.yml"
+
+    - name: Check system requirements
+      assert:
+        that:
+          - ansible_memtotal_mb >= 4096
+          - ansible_processor_vcpus >= 2
+        fail_msg: "System does not meet minimum requirements (4GB RAM, 2 CPU cores)"
+
+  roles:
+    - role: common
+      tags: [common, preparation]
+    
+    - role: docker
+      tags: [docker, containers]
+      
+    - role: ad_stack
+      tags: [ad-stack, deployment]
+      
+  post_tasks:
+    - name: Verify AD-Stack services are running
+      uri:
+        url: "https://{{ ad_server_ip }}:8080/api/v1/health"
+        method: GET
+        validate_certs: no
+        status_code: 200
+      register: health_check
+      retries: 30
+      delay: 10
+      until: health_check.status == 200
+
+    - name: Display deployment information
+      debug:
+        msg:
+          - "AD-Stack deployment completed successfully!"
+          - "Web Console: https://{{ ad_server_ip }}:9090"
+          - "API Endpoint: https://{{ ad_server_ip }}:8080/api/v1"
+          - "Domain: {{ ad_domain }}"
+          - "Realm: {{ ad_realm }}"
+          - "Default Admin: administrator"
+
+  handlers:
+    - name: restart systemd-resolved
+      systemd:
+        name: systemd-resolved
+        state: restarted
+      
+    - name: restart docker
+      systemd:
+        name: docker
+        state: restarted

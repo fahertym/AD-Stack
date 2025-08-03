@@ -1,0 +1,167 @@
+name: Feature Request
+description: Suggest a new feature for AD-Stack
+title: "[Feature]: "
+labels: ["enhancement", "feature-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! Please provide detailed information about your proposed feature and how it would benefit SMB users.
+
+  - type: textarea
+    id: feature-summary
+    attributes:
+      label: Feature Summary
+      description: A brief summary of the feature you'd like to see added.
+      placeholder: Brief description of the feature...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature-category
+    attributes:
+      label: Feature Category
+      description: Which area of AD-Stack does this feature relate to?
+      options:
+        - User Management
+        - Group Management
+        - DNS Management
+        - Certificate Management (PKI)
+        - File Sharing
+        - Group Policy
+        - Authentication & Authorization
+        - Web Interface
+        - CLI Tools
+        - API & Integration
+        - Monitoring & Logging
+        - Backup & Recovery
+        - Installation & Deployment
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: smb-use-case
+    attributes:
+      label: SMB Use Case
+      description: What type of SMB scenario does this feature address?
+      options:
+        - Small Office (5-25 users)
+        - Medium Business (25-100 users)
+        - Multi-site Organization
+        - Mixed Linux/Windows Environment
+        - Cloud/Hybrid Deployment
+        - Remote Work Support
+        - Compliance Requirements
+        - Cost Reduction
+        - Simplified Management
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem-statement
+    attributes:
+      label: Problem Statement
+      description: What specific problem does this feature solve for SMB users?
+      placeholder: |
+        Describe the current problem or limitation that this feature would address.
+        Focus on real-world SMB scenarios and pain points.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: Describe your proposed solution in detail.
+      placeholder: |
+        How should this feature work? What would the user experience look like?
+        Consider both technical implementation and user interface aspects.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternative-solutions
+    attributes:
+      label: Alternative Solutions
+      description: Have you considered any alternative approaches?
+      placeholder: |
+        Describe any alternative solutions or workarounds you've considered.
+        Why do you prefer your proposed solution over these alternatives?
+
+  - type: dropdown
+    id: priority-level
+    attributes:
+      label: Priority Level
+      description: How critical is this feature for SMB adoption?
+      options:
+        - Critical - Blocks SMB adoption
+        - High - Significantly improves SMB experience
+        - Medium - Nice to have for SMBs
+        - Low - Minor improvement
+    validations:
+      required: true
+
+  - type: dropdown
+    id: user-impact
+    attributes:
+      label: User Impact
+      description: Who would benefit from this feature?
+      options:
+        - End Users (employees)
+        - IT Administrators
+        - System Integrators
+        - All Users
+    validations:
+      required: true
+
+  - type: textarea
+    id: success-criteria
+    attributes:
+      label: Success Criteria
+      description: How would you measure the success of this feature?
+      placeholder: |
+        What specific outcomes would indicate this feature is successful?
+        How would it improve the SMB experience?
+
+  - type: textarea
+    id: implementation-details
+    attributes:
+      label: Implementation Considerations
+      description: Any technical details or constraints to consider?
+      placeholder: |
+        Are there any specific technical requirements, dependencies, or constraints?
+        Should this integrate with existing SMB tools or standards?
+
+  - type: input
+    id: reference-implementations
+    attributes:
+      label: Reference Implementations
+      description: Are there existing tools that implement something similar?
+      placeholder: Microsoft AD, FreeIPA, etc.
+
+  - type: textarea
+    id: mockups-examples
+    attributes:
+      label: Mockups or Examples
+      description: Any visual mockups, screenshots, or examples?
+      placeholder: |
+        If you have mockups, wireframes, or examples from other tools,
+        please describe them or provide links.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please confirm the following before submitting
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: This feature aligns with AD-Stack's SMB focus
+          required: true
+        - label: I have provided sufficient detail for evaluation
+          required: true
+        - label: I understand this is a request, not a guarantee of implementation
+          required: true

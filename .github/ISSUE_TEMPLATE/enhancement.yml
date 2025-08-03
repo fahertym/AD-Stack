@@ -1,0 +1,170 @@
+name: Enhancement
+description: Suggest an improvement to existing AD-Stack functionality
+title: "[Enhancement]: "
+labels: ["enhancement", "improvement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an improvement! Please help us understand how to make existing AD-Stack features better for SMB users.
+
+  - type: textarea
+    id: enhancement-summary
+    attributes:
+      label: Enhancement Summary
+      description: A brief summary of the improvement you'd like to see.
+      placeholder: Brief description of the enhancement...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component to Enhance
+      description: Which AD-Stack component needs improvement?
+      options:
+        - Web UI - User Interface
+        - Web UI - User Experience
+        - CLI - Command Line Interface
+        - API - REST Endpoints
+        - Orchestrator - Service Management
+        - Configuration - Settings Management
+        - Installation - Setup Process
+        - Documentation - User Guides
+        - Documentation - Developer Guides
+        - Ansible - Automation Playbooks
+        - Docker - Container Setup
+        - Performance - Speed/Efficiency
+        - Security - Authentication/Authorization
+        - Logging - Monitoring/Debugging
+        - Error Handling - User Messages
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current Behavior
+      description: Describe how the feature currently works.
+      placeholder: |
+        What is the current user experience or behavior?
+        What works well and what could be improved?
+    validations:
+      required: true
+
+  - type: textarea
+    id: desired-behavior
+    attributes:
+      label: Desired Behavior
+      description: Describe how you'd like it to work instead.
+      placeholder: |
+        What would the improved experience look like?
+        How would this benefit SMB users specifically?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: improvement-type
+    attributes:
+      label: Type of Improvement
+      description: What kind of enhancement is this?
+      options:
+        - Usability - Easier to use
+        - Performance - Faster/more efficient
+        - Reliability - More stable/robust
+        - Accessibility - Better for all users
+        - Security - More secure
+        - Scalability - Handles more users/data
+        - Integration - Works better with other tools
+        - Documentation - Clearer instructions
+        - Error Handling - Better error messages
+        - Automation - Reduces manual work
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: user-benefit
+    attributes:
+      label: Primary User Benefit
+      description: Who would benefit most from this improvement?
+      options:
+        - End Users - Easier daily tasks
+        - IT Admins - Simplified management
+        - New Users - Easier onboarding
+        - Power Users - Advanced capabilities
+        - All Users - General improvement
+    validations:
+      required: true
+
+  - type: textarea
+    id: pain-points
+    attributes:
+      label: Current Pain Points
+      description: What specific issues does the current implementation cause?
+      placeholder: |
+        What frustrations or difficulties do users experience?
+        How does this impact SMB productivity?
+
+  - type: textarea
+    id: suggested-solution
+    attributes:
+      label: Suggested Solution
+      description: How would you implement this improvement?
+      placeholder: |
+        What specific changes would you make?
+        Consider both UI/UX and technical aspects.
+
+  - type: input
+    id: examples
+    attributes:
+      label: Examples from Other Tools
+      description: Are there good examples of this pattern in other tools?
+      placeholder: Reference implementations or inspiration sources
+
+  - type: dropdown
+    id: implementation-effort
+    attributes:
+      label: Estimated Effort
+      description: How complex do you think this enhancement would be?
+      options:
+        - Small - UI tweaks, text changes
+        - Medium - New features, workflow changes
+        - Large - Significant restructuring
+        - Unknown - Needs technical assessment
+
+  - type: dropdown
+    id: backwards-compatibility
+    attributes:
+      label: Backwards Compatibility
+      description: Would this change affect existing configurations?
+      options:
+        - No impact - Fully backward compatible
+        - Minor impact - Easy migration path
+        - Major impact - Breaking changes required
+        - Unknown - Needs analysis
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How would you know this enhancement is successful?
+      placeholder: |
+        What specific outcomes would indicate success?
+        How would you test that it's working correctly?
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please confirm the following before submitting
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: This enhancement would benefit SMB users
+          required: true
+        - label: I have clearly described the current vs. desired behavior
+          required: true
+        - label: I understand this is a suggestion, not a guarantee of implementation
+          required: true

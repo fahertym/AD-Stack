@@ -1,0 +1,37 @@
+server:
+  host: "{{ ad_server_ip }}"
+  port: 8080
+  tls_enabled: {{ tls_enabled | default(true) }}
+  {% if tls_enabled | default(true) %}
+  tls_cert_path: "{{ ad_stack_config_dir }}/tls/server.crt"
+  tls_key_path: "{{ ad_stack_config_dir }}/tls/server.key"
+  {% endif %}
+
+database:
+  url: "postgresql://ad-stack:{{ postgres_password }}@localhost/ad_stack"
+  max_connections: {{ db_max_connections | default(20) }}
+  timeout_seconds: {{ db_timeout_seconds | default(30) }}
+
+logging:
+  level: "{{ log_level | default('info') }}"
+  file_path: "{{ ad_stack_log_dir }}/app.log"
+  rotation: true
+
+services:
+  samba:
+    domain: "{{ ad_domain }}"
+    realm: "{{ ad_realm }}"
+    admin_password: "{{ ad_admin_password }}"
+    config_path: "/etc/samba/smb.conf"
+    
+  dns:
+    forwarders:
+{% for forwarder in ad_dns_forwarders | default(['8.8.8.8', '8.8.4.4']) %}
+      - "{{ forwarder }}"
+{% endfor %}
+    zone_file_path: "/var/lib/samba/private/dns"
+    
+  pki:
+    ca_cert_path: "{{ ad_stack_config_dir }}/pki/ca.crt"
+    ca_key_path: "{{ ad_stack_config_dir }}/pki/ca.key"
+    cert_validity_days: {{ cert_validity_days | default(365) }}

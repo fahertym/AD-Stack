@@ -1,0 +1,197 @@
+---
+- name: Create AD-Stack system user
+  user:
+    name: "{{ ad_stack_user }}"
+    group: "{{ ad_stack_group }}"
+    system: yes
+    shell: /bin/false
+    home: "{{ ad_stack_home }}"
+    create_home: yes
+
+- name: Create required directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ad_stack_user }}"
+    group: "{{ ad_stack_group }}"
+    mode: '0755'
+  loop:
+    - "{{ ad_stack_home }}"
+    - "{{ ad_stack_config_dir }}"
+    - "{{ ad_stack_data_dir }}"
+    - "{{ ad_stack_log_dir }}"
+    - "{{ ad_stack_data_dir }}/postgresql"
+    - "{{ ad_stack_data_dir }}/redis"
+    - "{{ ad_stack_data_dir }}/samba"
+
+- name: Install required packages
+  package:
+    name:
+      - curl
+      - wget
+      - gnupg
+      - ca-certificates
+      - software-properties-common
+      - apt-transport-https
+      - python3-pip
+      - python3-docker
+    state: present
+
+- name: Install Docker
+  block:
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+
+    - name: Install Docker CE
+      package:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+
+    - name: Start and enable Docker
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add ad-stack user to docker group
+      user:
+        name: "{{ ad_stack_user }}"
+        groups: docker
+        append: yes
+
+- name: Configure firewall
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - '53'     # DNS
+    - '88'     # Kerberos
+    - '389'    # LDAP
+    - '636'    # LDAPS
+    - '443'    # HTTPS
+    - '464'    # Kerberos Password Change
+    - '8080'   # API
+    - '9090'   # Web Console
+  when: ansible_os_family == "Debian"
+
+- name: Configure firewalld
+  firewalld:
+    port: "{{ item }}/tcp"
+    permanent: yes
+    state: enabled
+    immediate: yes
+  loop:
+    - '53'
+    - '88'
+    - '389'
+    - '636'
+    - '443'
+    - '464'
+    - '8080'
+    - '9090'
+  when: ansible_os_family == "RedHat"
+
+- name: Allow UDP ports for DNS and Kerberos
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: udp
+  loop:
+    - '53'     # DNS
+    - '88'     # Kerberos
+    - '464'    # Kerberos
+  when: ansible_os_family == "Debian"
+
+- name: Allow UDP ports for DNS and Kerberos (firewalld)
+  firewalld:
+    port: "{{ item }}/udp"
+    permanent: yes
+    state: enabled
+    immediate: yes
+  loop:
+    - '53'
+    - '88'
+    - '464'
+  when: ansible_os_family == "RedHat"
+
+- name: Download AD-Stack docker-compose file
+  get_url:
+    url: "https://raw.githubusercontent.com/fahertym/AD-Stack/main/docker/production/docker-compose.yml"
+    dest: "{{ ad_stack_home }}/docker-compose.yml"
+    owner: "{{ ad_stack_user }}"
+    group: "{{ ad_stack_group }}"
+    mode: '0644'
+
+- name: Generate environment configuration
+  template:
+    src: ad-stack.env.j2
+    dest: "{{ ad_stack_home }}/.env"
+    owner: "{{ ad_stack_user }}"
+    group: "{{ ad_stack_group }}"
+    mode: '0600'
+  notify: restart ad-stack
+
+- name: Generate AD-Stack configuration
+  template:
+    src: config.yaml.j2
+    dest: "{{ ad_stack_config_dir }}/config.yaml"
+    owner: "{{ ad_stack_user }}"
+    group: "{{ ad_stack_group }}"
+    mode: '0644'
+  notify: restart ad-stack
+
+- name: Create systemd service file
+  template:
+    src: ad-stack.service.j2
+    dest: /etc/systemd/system/ad-stack.service
+    mode: '0644'
+  notify:
+    - reload systemd
+    - restart ad-stack
+
+- name: Start and enable AD-Stack service
+  systemd:
+    name: ad-stack
+    state: started
+    enabled: yes
+    daemon_reload: yes
+
+- name: Wait for services to be ready
+  wait_for:
+    port: 8080
+    host: "{{ ad_server_ip }}"
+    timeout: 300
+    delay: 30
+
+- name: Initialize AD domain
+  uri:
+    url: "http://{{ ad_server_ip }}:8080/api/v1/setup/init"
+    method: POST
+    body_format: json
+    body:
+      domain: "{{ ad_domain }}"
+      realm: "{{ ad_realm }}"
+      admin_password: "{{ ad_admin_password }}"
+      server_ip: "{{ ad_server_ip }}"
+      dns_forwarders: "{{ ad_dns_forwarders | default(['8.8.8.8', '8.8.4.4']) }}"
+    status_code: [200, 201]
+  register: init_result
+  retries: 5
+  delay: 30
+
+- name: Display initialization result
+  debug:
+    msg: "Domain initialization completed: {{ init_result.json.message if init_result.json is defined else 'Success' }}"
