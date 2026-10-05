@@ -1,3 +1,9 @@
+> [!IMPORTANT]
+> **Inactive / historical repository.** Dormant open-source identity-management experiment. Retained as infrastructure/product lineage; not part of the current homelab or ICN identity architecture.
+> **Current related work:** [fahertym/network-ops](https://github.com/fahertym/network-ops)
+>
+> Preserved for project archaeology. Do not infer current system state from this repository.
+
 # AD-Stack
 
 > **A turnkey, GUI-driven, open-source replacement for Windows Active Directory—built for SMBs, powered by Samba, FreeIPA, Dogtag PKI, Keycloak and Cockpit.**
